@@ -124,13 +124,14 @@ impl NativeClassManager {
                 // TODO(Yoni): make sure `wait_on_native_compilation` cannot be set to true while
                 // `run_cairo_native` is false.
                 assert!(
-                    !self.wait_on_native_compilation(),
+                    !self.wait_on_native_compilation() | self.cairo_native_is_suspended(),
                     "Manager did not wait on native compilation."
                 );
                 cached_class
             }
             CachedClass::V1Native(CachedCairoNative::Compiled(native))
-                if !self.run_class_with_cairo_native(class_hash) | self.cairo_native_is_suspended() =>
+                if !self.run_class_with_cairo_native(class_hash)
+                    | self.cairo_native_is_suspended() =>
             {
                 CachedClass::V1(native.casm(), Arc::new(SierraContractClass::default()))
             }
